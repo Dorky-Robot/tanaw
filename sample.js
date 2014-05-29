@@ -1,12 +1,14 @@
+console.time('cssify');
 var one = jscss({
   '#footer .stuff': {
     color: 'orange',
     width: '33px'}
 });
 
+console.timeEnd('cssify');
 console.log("one: " + one);
 
-
+console.time('cssify');
 var two = jscss({
   '#footer .stuff': {
     color: 'orange',
@@ -16,8 +18,10 @@ var two = jscss({
     width: '232px'}
 });
 
+console.timeEnd('cssify');
 console.log("two: " + two);
 
+console.time('cssify');
 var nested = jscss({
   '#footer': {
     ' .stuff': {
@@ -30,24 +34,25 @@ var nested = jscss({
   }
 });
 
+console.timeEnd('cssify');
 console.log("nested: " + nested);
 
-
+console.time('cssify');
 var complex = jscss({
-
 '#header':{
-  color: 'red',
-  width: '232px'},
-'#main':{
-  ' .blue': {
-    color: '#0BB5FF',
-    '.stuff' : { width: '232px' },
-    width: '34px'}
+    color: 'red',
+    width: '232px',
+  ' #main':{
+    ' .blue': {
+      color: '#0BB5FF',
+      '.stuff' : { width: '232px' },
+      width: '34px'}
+  },
+  '.stuff': { width: '34px'},
+  ' .purple': { color: '#5D478B' },
 },
-'.stuff': { width: '34px'},
-' .purple': { color: '#5D478B' },
 '#footer .stuff': { color: 'orange' }
-
 });
 
+console.timeEnd('cssify');
 console.log("complex: " + complex);

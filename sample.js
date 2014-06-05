@@ -1,58 +1,50 @@
-console.time('cssify');
-var one = jscss({
-  '#footer .stuff': {
-    color: 'orange',
-    width: '33px'}
-});
+var styles = function(n) {
+  function colors() {
+    return ['red', 'orange', 'yellow', 'green', 'violet', 'indigo', 'blue'][_.random(0,6)];
+  }
 
-console.timeEnd('cssify');
-console.log("one: " + one);
+  function sizes() {
+    return _.random(22, 50) + 'px';
+  }
 
-console.time('cssify');
-var two = jscss({
-  '#footer .stuff': {
-    color: 'orange',
-    width: '33px'},
-  '#header': {
-    color: 'red',
-    width: '232px'}
-});
+  function selectors(i) {
+    return ' .dot-' + i;
+  }
 
-console.timeEnd('cssify');
-console.log("two: " + two);
+  function properties() {
+    return {
+      color: colors(),
+      'font-size': sizes()
+    };
+  }
 
-console.time('cssify');
-var nested = jscss({
-  '#footer': {
-    ' .stuff': {
-      color: 'orange',
-      width: '33px'},
-    color: 'blue',
-    '.crap' : {
-      color: 'red'
-    }
+  var dotStyles = _.object(_.times(n, selectors), _.times(n, properties));
+  return { '#dots' : dotStyles };
+}
+
+$(function() {
+  var numberOfDots = 700;
+
+  addDots(numberOfDots);
+
+  setInterval(function() {
+    inject(jscss.compile(styles(numberOfDots)));
+  }, 50);
+
+  function inject(css) {
+    if ($('head style').length === 0) $('head').append('<style></style>');
+    $('head style').html(css);
+  }
+
+  function addDots(n) {
+    _.times(n, function(i) {
+      $dots = $('#dots');
+
+      $dots.append('<span class="dot-' + i + '">.</span>');
+
+      if ((i+1) % 100 === 0) {
+        $dots.append('<br />');
+      }
+    });
   }
 });
-
-console.timeEnd('cssify');
-console.log("nested: " + nested);
-
-console.time('cssify');
-var complex = jscss({
-'#header':{
-    color: 'red',
-    width: '232px',
-  ' #main':{
-    ' .blue': {
-      color: '#0BB5FF',
-      '.stuff' : { width: '232px' },
-      width: '34px'}
-  },
-  '.stuff': { width: '34px'},
-  ' .purple': { color: '#5D478B' },
-},
-'#footer .stuff': { color: 'orange' }
-});
-
-console.timeEnd('cssify');
-console.log("complex: " + complex);

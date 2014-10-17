@@ -25,6 +25,7 @@ var one = jscss.compile({
 });
 
 ;=> #footer .stuff{color:orange;width:33px}
+```
 
 Here is an even more complex example.
 

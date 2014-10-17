@@ -19,11 +19,19 @@ var styles = function(n) {
   }
 
   var dotStyles = _.object(_.times(n, selectors), _.times(n, properties));
-  return { '#dots' : dotStyles };
+
+  return {
+    '#container' : {
+      'margin': '0 auto',
+      'display': 'table',
+      'width': '1024px'
+    },
+    '#dots' : _.extend(dotStyles, {"height": "130px"})
+  };
 }
 
 $(function() {
-  var numberOfDots = 700;
+  var numberOfDots = 200;
 
   addDots(numberOfDots);
 
@@ -32,7 +40,6 @@ $(function() {
   }, 50);
 
   function inject(css) {
-    if ($('head style').length === 0) $('head').append('<style></style>');
     $('head style').html(css);
   }
 

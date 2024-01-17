@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>JSCSS</title>
+    <script src="tanaw.bundle.min.js" type="text/javascript"></script>
+    <style></style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>JSCSS</h1>
+      <h2>Dynamic Demo</h2>
+      <p>This demonstrates the flexibility that Tanaw can provide.</p>
+      <p>
+        By allowing users to use the full power of Javascript, and the
+        flexibility of a "SCSS like" syntax, it is possible to create CSS styles
+        with very dynamic behaviors.
+      </p>
+      <p>
+        The example below shows 200 dots animated solely by dynamically
+        injecting new css to this page every 50 milliseconds.
+      </p>
+      <p>
+        To demonstrate this more clearly, inspect the body of this page, and
+        notice that the body itself is not modified. Instead, inspect the head
+        of the page and notice that the style tag is getting modified.
+      </p>
+      <div id="dots"></div>
+    </div>
+    <script>
+      function generateStyles(numDots) {
+        const colors = () =>
+          ["red", "orange", "yellow", "green", "violet", "indigo", "blue"][
+            Math.floor(Math.random() * 7)
+          ];
+        const sizes = () => `${Math.floor(Math.random() * 29 + 22)}px`;
+
+        const dotStyles = {};
+        for (let i = 0; i < numDots; i++) {
+          dotStyles[`.dot-${i}`] = [
+            ["color", colors()],
+            ["font-size", sizes()],
+          ];
+        }
+
+        return {
+          "#container": [
+            ["margin", "0 auto"],
+            ["display", "table"],
+            ["width", "1024px"],
+          ],
+          "#dots": {
+            ...dotStyles, // Spread the dotStyles object here
+            height: [["130px"]], // Ensure the 'height' property is an array of arrays
+          },
+        };
+      }
+
+      function injectCSS(css) {
+        let styleElement = document.querySelector("head style");
+
+        if (!styleElement) {
+          styleElement = document.createElement("style");
+          document.head.appendChild(styleElement);
+        }
+
+        styleElement.innerHTML = css;
+      }
+
+      function addDots(numDots) {
+        const dotsContainer = document.getElementById("dots");
+        let dotsHtml = "";
+
+        for (let i = 0; i < numDots; i++) {
+          dotsHtml += `<span class="dot-${i}">.</span>`;
+          if ((i + 1) % 100 === 0) {
+            dotsHtml += "<br />";
+          }
+        }
+
+        dotsContainer.innerHTML = dotsHtml;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const numberOfDots = 200;
+
+        addDots(numberOfDots);
+
+        setInterval(() => {
+          injectCSS(Tanaw.style(generateStyles(numberOfDots)));
+        }, 50);
+      });
+    </script>
+  </body>
+</html>

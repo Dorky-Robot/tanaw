@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Tanaw</title>
+    <style id="dynamic-styles"></style>
+  </head>
+  <body>
+    <header id="header">
+      <h1>Welcome to Tanaw</h1>
+      <p>Dynamic Styling with JavaScript</p>
+    </header>
+    <main id="main-content">
+      <button id="change-style-button">Change Style</button>
+    </main>
+
+    <!-- Include Tanaw library here -->
+    <script src="tanaw.bundle.min.js"></script>
+    <script>
+      // Function to generate an HSL color with a random hue and fixed saturation and lightness
+      function generateBaseHSL() {
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = 70; // Percentage
+        const lightness = 50; // Percentage
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      }
+
+      // Function to generate an analogous color palette
+      function generateAnalogousPalette(baseHue, offset) {
+        const analogousPalette = [];
+        for (let i = -1; i <= 1; i++) {
+          const hue = (baseHue + i * offset + 360) % 360;
+          analogousPalette.push(`hsl(${hue}, 70%, 50%)`);
+        }
+        return analogousPalette;
+      }
+
+      // Function to generate new Tanaw styles with an analogous color scheme
+      function generateAnalogousColorScheme() {
+        const baseColor = generateBaseHSL();
+        const baseHue = parseInt(baseColor.match(/hsl\((\d+),/)[1], 10);
+        const colorPalette = generateAnalogousPalette(baseHue, 30); // 30 degrees offset for analogous colors
+
+        return {
+          body: [
+            ["background-color", colorPalette[0]],
+            ["color", colorPalette[1]],
+            ["transition", "background-color 0.3s ease, color 0.3s ease"],
+          ],
+          "#header h1": [["color", colorPalette[2]]],
+          button: [
+            ["background-color", colorPalette[1]],
+            ["border", "none"],
+            ["padding", "10px", "20px"],
+            ["border-radius", "5px"],
+            ["cursor", "pointer"],
+
+            ["font-size", "16px"],
+            ["color", colorPalette[0]],
+            ["transition", "background-color 0.3s ease"],
+          ],
+          "button:hover": [["background-color", colorPalette[2]]],
+        };
+      } // Function to apply new styles to the page
+      function applyNewStyles() {
+        const newStyles = generateAnalogousColorScheme();
+        const compiledCSS = Tanaw.style(newStyles);
+        injectCSS(compiledCSS);
+      }
+
+      // Function to inject compiled CSS into the page
+      function injectCSS(css) {
+        let styleElement = document.getElementById("dynamic-styles");
+
+        if (!styleElement) {
+          styleElement = document.createElement("style");
+          document.head.appendChild(styleElement);
+        }
+
+        styleElement.innerHTML = css;
+      }
+
+      // Event listener for the button
+      document.addEventListener("DOMContentLoaded", () => {
+        const changeStyleButton = document.getElementById(
+          "change-style-button"
+        );
+        changeStyleButton.addEventListener("click", applyNewStyles);
+      });
+
+      applyNewStyles();
+    </script>
+  </body>
+</html>

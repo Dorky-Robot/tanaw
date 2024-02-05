@@ -5,30 +5,48 @@ function style(tnss) {
 
 const NO_SELECTOR = '__*__'
 function process({ tnss, parent, css = {}, nested }) {
-  if (Array.isArray(tnss) && typeof tnss[0] === 'string') {
-    const [propName, ...values] = tnss;
-    const prop = `${propName}:${processCssValues(values)};`;
+
+  if (Array.isArray(tnss)) {
+    const [propName, value] = tnss;
+    const prop = `${camelToKababCase(propName)}:${value};`;
     const target = nested ? (css[nested] = css[nested] || {}) : css;
-    const key = parent || NO_SELECTOR;
+    const key = camelToKababCase(parent || NO_SELECTOR);
 
     target[key] = (target[key] || '') + prop;
-  } else if (Array.isArray(tnss)) {
-    for (let item of tnss) {
-      process({ tnss: item, parent, css, nested });
-    }
   } else {
-    for (let [key, value] of Object.entries(tnss)) {
-      process({
-        tnss: value,
-        parent: key.startsWith('@') ? parent : sel(parent, key),
-        css,
-        nested: key.startsWith('@') ? key : nested
-      });
+    for (let key of Object.keys(tnss)) {
+      if (key.startsWith('@')) {
+        process({
+          tnss: tnss[key],
+          parent,
+          css,
+          nested: key
+        });
+      } else if (typeof tnss[key] === 'string') {
+        process({
+          tnss: [key, tnss[key]],
+          parent,
+          css,
+          nested
+        });
+      } else {
+        process({
+          tnss: tnss[key],
+          parent: sel(parent, key),
+          css,
+          nested: nested
+        });
+      }
     }
   }
 
   return css;
 }
+
+function camelToKababCase(str) {
+  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+}
+
 
 function sel(parent, selector) {
   if (!parent) return selector;
@@ -46,22 +64,8 @@ function compile(tnss) {
   ).join('');
 }
 
-
 function isBlank(o) {
   return !o || o.length === 0 || Object.keys(o).length === 0;
-}
-
-function processCssValues(values) {
-  if (typeof values === 'string') {
-    return values;
-  } else if (values.func) {
-    const func = values.func[0];
-    const args = values.func.slice(1);
-
-    return `${func}(${args.join(',')})`;
-  } else {
-    return values.map(processCssValues).join(' ');
-  }
 }
 
 module.exports = {

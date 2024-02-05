@@ -14,17 +14,17 @@ For example:
 
 ```javascript
 Tanaw.style({
-  ":root": [["--max-width", "768px"]],
-  ".grid-container": [
-    ["display", "grid"],
-    ["grid-template-columns", { func: ["repeat", 2, "1fr"] }],
-    ["gap", "10px"],
-    { ".nested-item": [["color", "red"]] },
-  ],
+  ":root": { "--max-width": "768px" },
+  ".grid-container": {
+    display: "grid",
+    gridTemplateColumns: "repeat(2,1fr)",
+    gap: "10px",
+    ".nested-item": { color: "red" },
+  },
   "@media screen and (max-width: var(--max-width))": {
-    ".grid-container": [
-      ["grid-template-columns", { func: ["repeat", 1, "1fr"] }],
-    ],
+    ".grid-container": {
+      "grid-template-columns": "repeat(1,1fr)",
+    },
   },
 });
 ```
@@ -40,10 +40,10 @@ This can then be injected into the HTML body.
 Alternatively, you can express bare styles like so:
 
 ```javascript
-Tanaw.style([
-  ["border", "1px", "solid", "black"],
-  ["color", "white"],
-]);
+Tanaw.style({
+  border: "1px,solid,black",
+  color: "white",
+});
 ```
 
 Resulting in
@@ -68,21 +68,21 @@ function generateStyles(numDots) {
 
   const dotStyles = {};
   for (let i = 0; i < numDots; i++) {
-    dotStyles[`.dot-${i}`] = [
-      ["color", colors()],
-      ["font-size", sizes()],
-    ];
+    dotStyles[`.dot-${i}`] = {
+      color: colors(),
+      fontSize: sizes(),
+    };
   }
 
   return {
-    "#container": [
-      ["margin", "0 auto"],
-      ["display", "table"],
-      ["width", "1024px"],
-    ],
+    "#container": {
+      margin: "0 auto",
+      display: "table",
+      width: "1024px",
+    },
     "#dots": {
       ...dotStyles, // Spread the dotStyles object here
-      height: [["130px"]], // Ensure the 'height' property is an array of arrays
+      height: "130px", // Ensure the 'height' property is an array of arrays
     },
   };
 }
@@ -128,7 +128,9 @@ In this sample, we generate a base HSL color and then create an analogous palett
     <main id="main-content">
       <button id="change-style-button">Change Style</button>
     </main>
-    <script src="tanaw.bundle.min.js"></script>
+
+    <!-- Include Tanaw library here -->
+    <script src="../dist/tanaw.bundle.js"></script>
     <script>
       // Function to generate an HSL color with a random hue and fixed saturation and lightness
       function generateBaseHSL() {
@@ -155,24 +157,23 @@ In this sample, we generate a base HSL color and then create an analogous palett
         const colorPalette = generateAnalogousPalette(baseHue, 30); // 30 degrees offset for analogous colors
 
         return {
-          body: [
-            ["background-color", colorPalette[0]],
-            ["color", colorPalette[1]],
-            ["transition", "background-color 0.3s ease, color 0.3s ease"],
-          ],
-          "#header h1": [["color", colorPalette[2]]],
-          button: [
-            ["background-color", colorPalette[1]],
-            ["border", "none"],
-            ["padding", "10px", "20px"],
-            ["border-radius", "5px"],
-            ["cursor", "pointer"],
-
-            ["font-size", "16px"],
-            ["color", colorPalette[0]],
-            ["transition", "background-color 0.3s ease"],
-          ],
-          "button:hover": [["background-color", colorPalette[2]]],
+          body: {
+            backgroundColor: colorPalette[0],
+            color: colorPalette[1],
+            transition: `background-color(0.3s ease, color 0.3s ease)`,
+          },
+          "#header h1": { color: colorPalette[2] },
+          button: {
+            backgroundColor: colorPalette[1],
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontSize: "16px",
+            color: colorPalette[0],
+            transition: "background-color 0.3s ease",
+          },
+          "button:hover": { backgroundColor: colorPalette[2] },
         };
       } // Function to apply new styles to the page
       function applyNewStyles() {

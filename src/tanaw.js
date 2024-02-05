@@ -55,7 +55,6 @@ function sel(parent, selector) {
 
   // Function to correctly join parent and selector, accounting for pseudo-selectors
   function join(p, s) {
-    // If the selector starts with a pseudo-selector, don't add a space before it
     return p + (s.startsWith(':') ? '' : ' ') + s;
   }
 
@@ -66,8 +65,6 @@ function sel(parent, selector) {
 
   return combinedSelectors;
 }
-
-
 
 function compile(tnss) {
   if (typeof tnss !== 'object' || Array.isArray(tnss) || isBlank(tnss)) {

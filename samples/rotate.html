@@ -16,7 +16,7 @@
     </main>
 
     <!-- Include Tanaw library here -->
-    <script src="tanaw.bundle.min.js"></script>
+    <script src="../dist/tanaw.bundle.js"></script>
     <script>
       // Function to generate an HSL color with a random hue and fixed saturation and lightness
       function generateBaseHSL() {
@@ -43,24 +43,23 @@
         const colorPalette = generateAnalogousPalette(baseHue, 30); // 30 degrees offset for analogous colors
 
         return {
-          body: [
-            ["background-color", colorPalette[0]],
-            ["color", colorPalette[1]],
-            ["transition", "background-color 0.3s ease, color 0.3s ease"],
-          ],
-          "#header h1": [["color", colorPalette[2]]],
-          button: [
-            ["background-color", colorPalette[1]],
-            ["border", "none"],
-            ["padding", "10px", "20px"],
-            ["border-radius", "5px"],
-            ["cursor", "pointer"],
-
-            ["font-size", "16px"],
-            ["color", colorPalette[0]],
-            ["transition", "background-color 0.3s ease"],
-          ],
-          "button:hover": [["background-color", colorPalette[2]]],
+          body: {
+            backgroundColor: colorPalette[0],
+            color: colorPalette[1],
+            transition: `background-color(0.3s ease, color 0.3s ease)`,
+          },
+          "#header h1": { color: colorPalette[2] },
+          button: {
+            backgroundColor: colorPalette[1],
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontSize: "16px",
+            color: colorPalette[0],
+            transition: "background-color 0.3s ease",
+          },
+          "button:hover": { backgroundColor: colorPalette[2] },
         };
       } // Function to apply new styles to the page
       function applyNewStyles() {

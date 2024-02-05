@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>JSCSS</title>
-    <script src="tanaw.bundle.min.js" type="text/javascript"></script>
+    <script src="../dist/tanaw.bundle.js" type="text/javascript"></script>
     <style></style>
   </head>
   <body>
@@ -38,21 +38,21 @@
 
         const dotStyles = {};
         for (let i = 0; i < numDots; i++) {
-          dotStyles[`.dot-${i}`] = [
-            ["color", colors()],
-            ["font-size", sizes()],
-          ];
+          dotStyles[`.dot-${i}`] = {
+            color: colors(),
+            fontSize: sizes(),
+          };
         }
 
         return {
-          "#container": [
-            ["margin", "0 auto"],
-            ["display", "table"],
-            ["width", "1024px"],
-          ],
+          "#container": {
+            margin: "0 auto",
+            display: "table",
+            width: "1024px",
+          },
           "#dots": {
             ...dotStyles, // Spread the dotStyles object here
-            height: [["130px"]], // Ensure the 'height' property is an array of arrays
+            height: "130px", // Ensure the 'height' property is an array of arrays
           },
         };
       }

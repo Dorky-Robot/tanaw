@@ -213,11 +213,53 @@ describe('style function', () => {
         }
       }
     };
-    const expected = ".alert ul,.alert p,.warning ul,.warning p {margin-right:0;margin-left: 0;padding-bottom:0;}";
+    const expected = ".alert ul,.alert p,.warning ul,.warning p{margin-right:0;margin-left:0;padding-bottom:0;}";
     expect(style(input)).toBe(expected);
   });
 
-  xit('acid test', () => {
+  it('handles comma separated parent', () => {
+    const input = {
+      '.alert, .warning': {
+        'ul': {
+          'margin-right': 0,
+          'margin-left': 0,
+          'padding-bottom': 0
+        }
+      }
+    };
+    const expected = ".alert ul,.warning ul{margin-right:0;margin-left:0;padding-bottom:0;}"
+    expect(style(input)).toBe(expected);
+  });
+
+  it('handles nested comma separated css children', () => {
+    const input = {
+      '.alert': {
+        'ul, p': {
+          'margin-right': 0,
+          'margin-left': 0,
+          'padding-bottom': 0
+        }
+      }
+    };
+    const expected = ".alert ul,.alert p{margin-right:0;margin-left:0;padding-bottom:0;}"
+    expect(style(input)).toBe(expected);
+  });
+
+  it('handles nested comma separated css selector for pseudo selector', () => {
+    const input = {
+      '.alert, .warning': {
+        ':hover': {
+          'margin-right': 0,
+          'margin-left': 0,
+          'padding-bottom': 0
+        }
+      }
+    };
+    const expected = ".alert:hover,.warning:hover{margin-right:0;margin-left:0;padding-bottom:0;}"
+    expect(style(input)).toBe(expected);
+  });
+
+  it('acid test', () => {
     const input = {
       ':root': {
         '--max-width': '768px'
@@ -247,7 +289,7 @@ describe('style function', () => {
       }
     };
 
-    const expected = ":root{--max-width:768px;}.grid-container{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;.grid-container .nested-item{color:red;}.grid-container:hover{color:blue;}}@media screen and (max-width: var(--max-width)){.grid-container{grid-template-columns:repeat(1,1fr);}}.alert ul,.alert p,.warning ul,.warning p {margin-right:0;margin-left: 0;padding-bottom:0;}"
+    const expected = ":root{--max-width:768px;}.grid-container{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}.grid-container .nested-item{color:red;}.grid-container:hover{color:blue;}@media screen and (max-width: var(--max-width)){.grid-item{grid-template-columns:repeat(1,1fr);}}.alert ul,.alert p,.warning ul,.warning p{margin-right:0;margin-left:0;padding-bottom:0;}";
     expect(style(input)).toBe(expected);
   });
 });

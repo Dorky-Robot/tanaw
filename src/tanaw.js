@@ -22,7 +22,7 @@ function process({ tnss, parent, css = {}, nested }) {
           css,
           nested: key
         });
-      } else if (typeof tnss[key] === 'string') {
+      } else if (typeof tnss[key] !== 'object') {
         process({
           tnss: [key, tnss[key]],
           parent,
@@ -50,8 +50,23 @@ function camelToKababCase(str) {
 
 function sel(parent, selector) {
   if (!parent) return selector;
-  return parent + (selector.startsWith(':') ? '' : ' ') + selector;
+  const ps = parent.split(',').map(p => p.trim());
+  const ss = selector.split(',').map(s => s.trim());
+
+  // Function to correctly join parent and selector, accounting for pseudo-selectors
+  function join(p, s) {
+    // If the selector starts with a pseudo-selector, don't add a space before it
+    return p + (s.startsWith(':') ? '' : ' ') + s;
+  }
+
+  // Combine each parent selector with each child selector, taking pseudo-selectors into account
+  const combinedSelectors = ps.map(p =>
+    ss.map(s => join(p, s)).join(',')
+  ).join(',');
+
+  return combinedSelectors;
 }
+
 
 
 function compile(tnss) {

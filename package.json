@@ -1,6 +1,6 @@
 {
   "name": "tanaw",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Use Javascript data structures to express CSS",
   "main": "dist/tanaw.bundle.js",
   "type": "module",

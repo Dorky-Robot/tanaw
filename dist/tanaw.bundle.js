@@ -8,86 +8,85 @@
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 	}
 
-	function style(tnss) {
-	  if (isBlank(tnss)) return tnss;
-	  return compile(process({ tnss }));
+	function style(stylesObject) {
+	  if (isEmpty(stylesObject)) return stylesObject;
+	  return compileStyles(processStyles({ stylesObject }));
 	}
 
 	const NO_SELECTOR = '__*__';
-	function process({ tnss, parent, css = {}, nested }) {
 
-	  if (Array.isArray(tnss)) {
-	    const [propName, value] = tnss;
-	    const prop = `${camelToKababCase(propName)}:${value};`;
-	    const target = nested ? (css[nested] = css[nested] || {}) : css;
-	    const key = camelToKababCase(parent || NO_SELECTOR);
+	function processStyles({ stylesObject, parentSelector = '', cssObject = {}, nestedSelector = '' }) {
+	  if (Array.isArray(stylesObject)) {
+	    const [property, value] = stylesObject;
+	    const cssProperty = `${camelToKebabCase(property)}:${value};`;
+	    const targetObject = nestedSelector ? (cssObject[nestedSelector] = cssObject[nestedSelector] || {}) : cssObject;
+	    const key = camelToKebabCase(parentSelector || NO_SELECTOR);
 
-	    target[key] = (target[key] || '') + prop;
+	    targetObject[key] = (targetObject[key] || '') + cssProperty;
 	  } else {
-	    for (let key of Object.keys(tnss)) {
+	    Object.keys(stylesObject).forEach(key => {
+	      const value = stylesObject[key];
 	      if (key.startsWith('@')) {
-	        process({
-	          tnss: tnss[key],
-	          parent,
-	          css,
-	          nested: key
+	        // Inline handling for media queries and nested selectors
+	        processStyles({
+	          stylesObject: value,
+	          cssObject: cssObject,
+	          nestedSelector: key
 	        });
-	      } else if (typeof tnss[key] !== 'object') {
-	        process({
-	          tnss: [key, tnss[key]],
-	          parent,
-	          css,
-	          nested
-	        });
+	      } else if (typeof value !== 'object') {
+	        // Inline handling for direct property-value pairs
+	        const cssProperty = `${camelToKebabCase(key)}:${value};`;
+	        const targetObject = nestedSelector ? (cssObject[nestedSelector] = cssObject[nestedSelector] || {}) : cssObject;
+	        const combinedKey = camelToKebabCase(parentSelector || NO_SELECTOR);
+	        targetObject[combinedKey] = (targetObject[combinedKey] || '') + cssProperty;
 	      } else {
-	        process({
-	          tnss: tnss[key],
-	          parent: sel(parent, key),
-	          css,
-	          nested: nested
+	        // Inline handling for nested selectors
+	        const combinedSelector = combineSelectors(parentSelector, key);
+	        processStyles({
+	          stylesObject: value,
+	          parentSelector: combinedSelector,
+	          cssObject: cssObject,
+	          nestedSelector
 	        });
 	      }
-	    }
+	    });
 	  }
 
-	  return css;
+	  return cssObject;
 	}
 
-	function camelToKababCase(str) {
-	  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
-	}
+	function combineSelectors(parent, child) {
+	  if (!parent) return child;
+	  const parentSelectors = splitAndTrim(parent);
+	  const childSelectors = splitAndTrim(child);
 
-
-	function sel(parent, selector) {
-	  if (!parent) return selector;
-	  const ps = parent.split(',').map(p => p.trim());
-	  const ss = selector.split(',').map(s => s.trim());
-
-	  // Function to correctly join parent and selector, accounting for pseudo-selectors
-	  function join(p, s) {
-	    return p + (s.startsWith(':') ? '' : ' ') + s;
-	  }
-
-	  // Combine each parent selector with each child selector, taking pseudo-selectors into account
-	  const combinedSelectors = ps.map(p =>
-	    ss.map(s => join(p, s)).join(',')
+	  const combined = parentSelectors.map(p =>
+	    childSelectors.map(c => `${p}${c.startsWith(':') ? '' : ' '}${c}`).join(',')
 	  ).join(',');
 
-	  return combinedSelectors;
+	  return combined;
 	}
 
-	function compile(tnss) {
-	  if (typeof tnss !== 'object' || Array.isArray(tnss) || isBlank(tnss)) {
-	    return tnss;
+	function camelToKebabCase(str) {
+	  return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+	}
+
+	function splitAndTrim(str) {
+	  return str.split(',').map(s => s.trim());
+	}
+
+	function compileStyles(cssObject) {
+	  if (typeof cssObject !== 'object' || Array.isArray(cssObject) || isEmpty(cssObject)) {
+	    return cssObject;
 	  }
 
-	  return Object.entries(tnss).map(([key, value]) =>
-	    key === NO_SELECTOR ? compile(value) : `${key}{${compile(value)}}`
+	  return Object.entries(cssObject).map(([key, value]) =>
+	    key === NO_SELECTOR ? compileStyles(value) : `${key}{${compileStyles(value)}}`
 	  ).join('');
 	}
 
-	function isBlank(o) {
-	  return !o || o.length === 0 || Object.keys(o).length === 0;
+	function isEmpty(obj) {
+	  return !obj || Object.keys(obj).length === 0;
 	}
 
 	var tanaw = {

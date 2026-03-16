@@ -1,14 +1,25 @@
 ## Overview
 
-Tanaw: (tagalog) a vista or a view
+**Tanaw** (tagalog: a vista or a view) is a lightweight (~1.3K minified) CSS-in-JS engine. It does one thing: **convert JavaScript objects into CSS strings**. It has no dependencies, creates no DOM elements, and handles no markup or behavior — just styles.
 
-The separation between styles, markup, and code has been the status quo in web development for a while now. However, as CSS, HTML, and JS, we've reached a point where those traditional boundaries might need reconsidering. As CSS, HTML, and JS evolve, those traditional concerns have started to blur into one another.
+```
+JS object  →  Tanaw.style()  →  CSS string  →  inject into <style> tag
+```
 
-It's possible to embed so much into vanilla CSS (for example) that it could have been written in JS. There are so many JS-based view frameworks today that it's hard to distinguish from the concern of HTML and JS.
+### Part of the Habiscript Ecosystem
 
-Many of the frameworks today are built on the premise that CSS, HTML, and JS are fundamentally separate. While this assumption made sense early on, we should reconsider those boundaries. This is where Tanaw comes in.
+Tanaw is the **styling layer** for [Habiscript](https://github.com/Dorky-Robot/habiscript), which handles the other two concerns — markup and behavior. Together they form a unified approach to web UI:
 
-Tanaw is one aspect of a larger framework (Alon.js). With Tanaw, you can express CSS in pure JS using objects, arrays, and strings.
+| Library | Concern | Input | Output |
+|---------|---------|-------|--------|
+| **Tanaw** | CSS only | JS objects describing styles | CSS strings |
+| **Habiscript** | HTML + JS (structure & behavior) | JS arrays describing DOM trees | DOM elements |
+
+Habiscript depends on Tanaw (`"tanaw": "^0.6.0"`) and calls `Tanaw.style()` internally whenever it processes style objects. You can also use Tanaw standalone — it works anywhere you need dynamic CSS without a view layer.
+
+### Why CSS-in-JS?
+
+CSS has grown powerful enough that complex styling logic increasingly resembles programming. Rather than maintaining a separate language for styles, Tanaw lets you use JavaScript directly — with loops, variables, spreads, and conditionals — to generate CSS. The result is still plain CSS injected into the page; the authoring just happens in JS.
 
 For example:
 
@@ -54,9 +65,9 @@ Resulting in
 
 Which can be used to inline styles in HTML
 
-## Breaking Traditional Boundaries
+## Dynamic CSS Generation
 
-As mentioned, Tanaw breaks traditional boundaries by removing the line between CSS, HTML, and JS. For example, we can construct highly dynamic CSS with JS.
+Because your styles are just JavaScript, you get the full power of the language — loops, randomization, spreads, conditionals — to generate CSS programmatically.
 
 ```javascript
 function generateStyles(numDots) {
@@ -105,7 +116,7 @@ function injectCSS(css) {
 injectCSS(Tanaw.style(generateStyles(1000)));
 ```
 
-To see the working example, check out dist/sample.js in the repo. This is just one example; I'm sure you can all think of more creative ways to leverage this.
+To see working examples, check out the `samples/` directory in the repo.
 
 ## Sample Usage
 

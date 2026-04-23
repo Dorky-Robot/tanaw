@@ -14,7 +14,7 @@
     "sass"
   ],
   "author": "Felix Flores",
-  "license": "ISC",
+  "license": "MIT OR Apache-2.0",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
